@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(passportConfig.initialize());
-app.use(cors());
+app.use(cors({ origin: 'http://minerva2021.s3-website.eu-north-1.amazonaws.com/' }));
 
 app.use((req, res, next) => {
   console.log(`\x1b[42m ${req.method} ${req.url} request received.\x1b[0m`);
