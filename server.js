@@ -8,6 +8,11 @@ require("dotenv").config();
 
 const initRouter = require("./routes");
 
+app.use((req, res, next) => {
+  console.log(`\x1b[42m ${req.method} ${req.url} request received.\x1b[0m`);
+  next();
+});
+
 // Connect to MongoDB
 mongoose    
   .connect(
