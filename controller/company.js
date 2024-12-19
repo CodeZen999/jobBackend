@@ -1,10 +1,10 @@
 const Joi = require('joi');
 const Job = require("../model/job");
-const Company = require("../model/company");
+const Companies = require("../model/company");
 const Application = require("../model/applications");
 
 // Function to add a new job
-const addJob = async (req, res) => {
+const addCompany = async (req, res) => {
   // Joi schema for validation
   const schema = Joi.object({
     id: Joi.string().required(),
@@ -13,15 +13,16 @@ const addJob = async (req, res) => {
     jobTitle: Joi.string().required(),
     // jobCategories: Joi.array().items(Joi.string()).required(),
     jobCategories: Joi.string().required(),
-    jobType: Joi.string().valid("full-time", "part-time", "contract", "internship").required(),
+    jobType: Joi.string().valid("Full-Time", "Part-Time", "Contract", "Internship").required(),
     salary:Joi.number().integer().required(),
     jobLocation: Joi.string().required(),
     jobDuration: Joi.string().optional(),
     discription: Joi.string().required(),
-    deadline: Joi.date(),
+    deadline: Joi.date().required(),
     positionsAvailable: Joi.number().integer().min(1).required(),
     maxApplicants: Joi.number().integer().min(1).required(),
     companyName: Joi.string().required(),
+    // contactNumber: Joi.string().pattern(/^\+\d{1,3}\d{10}$/).required(),
     contactNumber: Joi.string().required(),
     companyLogo: Joi.string().uri().optional(),
     companyCover: Joi.string().uri().optional(),
@@ -86,12 +87,12 @@ const addJob = async (req, res) => {
 };
 
 // Function to get list job
-const getJobList = async (req, res) => {
+const getCompanyList = async (req, res) => {
   let user = req.user;
   try {
-    const allJobs = await Job.find();
+    const allcompany = await Companies.find();
 
-    res.status(200).json({ allJobs});
+    res.status(200).json({allcompany});
   } catch (error) {
     console.log(error.message);
     res.status(400).json({ message: error.message });
@@ -99,8 +100,7 @@ const getJobList = async (req, res) => {
 
 }
 
-// Function to get details of a specific job by ID
-const getJobId = async (req, res) => {
+const getCompanyId = async (req, res) => {
   Job.findOne({ _id: req.params.id })
     .then((job) => {
       if (job == null) {
@@ -121,8 +121,7 @@ const getJobId = async (req, res) => {
     });
 };
 
-// Function to update details of a specific job by ID
-const updateJobDetails = async (req, res) => {
+const updateCompanyDetails = async (req, res) => {
   const user = req.user;
 
   // Check if the user is a recruiter
@@ -168,12 +167,11 @@ const updateJobDetails = async (req, res) => {
   }
 };
 
-// Function to allow an applicant to apply for a job
 const applyJob = async (req, res) => {
   const user = req.user;
-  console.log(req.body);
-
-  if (user.role != "applicant") {
+  // console.log(req.body);
+  // Check if the user is an applicant
+  if (user.type != "applicant") {
     res.status(401).json({
       message: "You don't have permissions to apply for a job",
     });
@@ -318,8 +316,6 @@ const applyJob = async (req, res) => {
     });
 };
 
-
-// This function checks if an applicant has an accepted job.
 const checkApply = async (req, res) => {
   const user = req.user;
 
@@ -361,7 +357,6 @@ const checkApply = async (req, res) => {
   }
 };
 
-// recruiter gets applications for a particular job
 const getApplications = async (req, res) => {
   const user = req.user;
 
@@ -407,7 +402,6 @@ const getApplications = async (req, res) => {
     });
 };
 
-//This function deletes a job from the database.
 const deleteJob = async (req, res) => {
   const user = req.user;
   if (user.type !== "recruiter" && user.type !== "admin") {
@@ -450,10 +444,7 @@ const getJobCategory = async(req, res) => {
 };
 
 module.exports = {
-  addJob,
-  getJobList,
-  getJobId,
-  updateJobDetails,
+  getCompanyList,
   applyJob,
   checkApply,
   getApplications,

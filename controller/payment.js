@@ -10,7 +10,7 @@ const BaseUrl = process.env.MODE === 'development'
 
   
 const createOrder = async (req, res) => {
-  const { price } = req.body;
+  const { price,currency,email,fullName,phoneNumber} = req.body;
 
   if (!price) {
     return res.status(400).json({ error: "Price is required" });
@@ -18,17 +18,17 @@ const createOrder = async (req, res) => {
 
   const request = {
     order_amount: price,
-    order_currency: "INR",
+    order_currency: currency,
     customer_details: {
       customer_id: "Applicant_123",  
-      customer_name: "Job_Applicant", 
-      customer_email: "job@gmail.com", 
-      customer_phone: "8474090589",   
+      customer_name: fullName, 
+      customer_email: email, 
+      customer_phone: phoneNumber,   
     },
     order_meta: {
       return_url: process.env.RETURN_URL,
     },
-    order_note: "Resume Service Payment", // Optional note
+    order_note: "Job Portal", // Optional note
   };
 
   try {
@@ -80,12 +80,13 @@ const craeteSesion = async (req, res) => {
 };
 
 const verifyPayment = async (req, res) => {
-
+  console.log(`this is orderId`, req.body.orderId);
+  
   const { orderId } = req.body;
-
+  
   Cashfree.PGOrderFetchPayments("2023-08-01", `${orderId}`).then((response) => {
     res.status(200).json(response.data);
-    // console.log('Order fetched successfully:', response.data);
+    console.log('Order fetched successfully:', response.data);
   }).catch((error) => {
     console.error('Error:', error.response.data.message);
   });

@@ -1,4 +1,4 @@
-const User = require("../model/user");
+const User = require("../model/Users"); 
 const Recruiter = require("../model/recruiter");
 const JobApplicant = require("../model/jobApplicant");
 const mongoose = require("mongoose");
@@ -7,16 +7,12 @@ const Application = require("../model/applications");
 const getAllUser = async (req, res) => {
   try {
     const allUser = await User.find();
-
-    // const allUsers = [...allRecruiter, ...allJobApplicant];
-
     res.status(200).json({ allUser, message: "show all user successfully" });
   } catch (error) {
     console.log(error.message);
     res.status(400).json({ message: error.message });
   }
 };
-
 // get user's personal details
 const getUser = (req, res) => {
   try {
@@ -55,7 +51,6 @@ const getUser = (req, res) => {
     res.status(500).send({ message: error.message });
   }
 };
-
 // get user details from id
 const getUserId = async (req, res) => {
   User.findOne({ _id: req.params.id })
@@ -103,7 +98,6 @@ const getUserId = async (req, res) => {
       res.status(400).json(err);
     });
 };
-
 // update user details
 const updateUser = async (req, res) => {
   try {

@@ -8,7 +8,7 @@ const jwtAuth = require("../middleware/jwtAuth");
 const router = express.Router();
 
 // Get, post công việc, yêu cầu xác thực JWT
-router.post("/",  jobCtrl.addJob); //jwtAuth
+router.post("/" , jobCtrl.addJob); //jwtAuth
 router.get("/", jobCtrl.getJobList);
 router.get("/:id", jobCtrl.getJobId);
 router.get("/:id/applications", jobCtrl.getApplications); //jwtAuth

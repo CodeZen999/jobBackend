@@ -1,19 +1,32 @@
 const mongoose = require("mongoose");
 
+// Define the schema for the job posting model
 let schema = new mongoose.Schema(
   {
-    userId: {
+    posterId: {
       type: mongoose.Schema.Types.ObjectId,
       required: false,
     },
-    category: {
+    fullName: {
       type: String,
-      require:true,
+      required: true, 
     },
-    title: {
+    email: {
+      type: String,
+      required: true, 
+      match: [ 
+        /^\S+@\S+\.\S+$/, 
+        'Please enter a valid email address'
+      ],
+    },
+    jobTitle: {
       type: String,
       required: true,
-    },   
+    },
+    jobCategories: {
+      type: String,
+      required: true,
+    },
     maxApplicants: {
       type: Number,
       validate: [
@@ -25,26 +38,28 @@ let schema = new mongoose.Schema(
           validator: function (value) {
             return value > 0;
           },
-          msg: "maxApplicants should greater than 0",
+          msg: "maxApplicants should be greater than 0",
         },
       ],
+      required: true, 
     },
-    maxPositions: {
+    positionsAvailable: {
       type: Number,
       validate: [
         {
           validator: Number.isInteger,
-          msg: "maxPostions should be an integer",
+          msg: "positionsAvailable should be an integer",
         },
         {
           validator: function (value) {
             return value > 0;
           },
-          msg: "maxPositions should greater than 0",
+          msg: "positionsAvailable should be greater than 0",
         },
       ],
+      required: true, 
     },
-    activeApplications: {    
+    activeApplications: {
       type: Number,
       default: 0,
       validate: [
@@ -56,7 +71,7 @@ let schema = new mongoose.Schema(
           validator: function (value) {
             return value >= 0;
           },
-          msg: "activeApplications should greater than equal to 0",
+          msg: "activeApplications should be greater than or equal to 0",
         },
       ],
     },
@@ -72,7 +87,7 @@ let schema = new mongoose.Schema(
           validator: function (value) {
             return value >= 0;
           },
-          msg: "acceptedCandidates should greater than equal to 0",
+          msg: "acceptedCandidates should be greater than or equal to 0",
         },
       ],
     },
@@ -85,18 +100,22 @@ let schema = new mongoose.Schema(
       validate: [
         {
           validator: function (value) {
-            return this.dateOfPosting < value;
+            return this.dateOfPosting < value; 
           },
-          msg: "deadline should be greater than dateOfPosting",
+          msg: "Deadline should be greater than dateOfPosting",
         },
       ],
-    },
-    skillsets: [String],
-    jobType: {
-      type: String,
       required: true,
     },
-    duration: {
+    skillsets: {
+      type: [String],
+      default: [],
+    },
+    jobType: {
+      type: String,
+      required: true, 
+    },
+    jobDuration: {
       type: Number,
       min: 0,
       validate: [
@@ -105,6 +124,7 @@ let schema = new mongoose.Schema(
           msg: "Duration should be an integer",
         },
       ],
+      required: true, 
     },
     salary: {
       type: Number,
@@ -120,28 +140,41 @@ let schema = new mongoose.Schema(
           msg: "Salary should be positive",
         },
       ],
-    },
-    location: {
-      type: String,
       required: true,
+    },
+    jobLocation: {
+      type: String,
+      required: true, 
     },
     rating: {
       type: Number,
       max: 5.0,
-      default: -1.0,
-      validate: {
-        validator: function (v) {
-          return v >= -1.0 && v <= 5.0;
-        },
-        msg: "Invalid rating",
-      },
+      default: 0, 
+      // validate: {
+      //   validator: function (v) {
+      //     return v >= -1.0 && v <= 5.0; // Rating should be between -1 and 5
+      //   },
+      //   msg: "Invalid rating",
+      // },
     },
-    description: {
+    discription: {
       type: String,
-      required: true,
+      required: true, 
     },
+    companyLogo: {
+      type: String,
+      required: true, 
+    },
+    companyCover: {
+      type: String,
+      required: true, 
+    },
+
   },
-  { collation: { locale: "en" } }
+  {
+    collation: { locale: "en" }, 
+    timestamps: true, 
+  }
 );
 
-module.exports = mongoose.model("jobs", schema);
+module.exports = mongoose.model("Job", schema);

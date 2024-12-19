@@ -8,6 +8,7 @@ const router = express.Router();
 router.post("/register", authCtrl.Register);
 router.post("/login", authCtrl.Login);
 router.get("/my-account", jwtAuth, authCtrl.getUser);
+router.put("/my-account/update",  authCtrl.update);//jwtAuth
 router.post("/password/forgot", authCtrl.forgotPassword);
 router.put("/password/reset", authCtrl.resetPassword);
 router.post("/send_recovery_email", authCtrl.sendEmail);

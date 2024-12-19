@@ -14,97 +14,24 @@ const sendMail = require("../utils/sendMail");
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID); // Your Google Client ID
 
 
-// const generateOTP = () => {
-//   const min = 1000;
-//   const max = 9999;
-//   return Math.floor(Math.random() * (max - min + 1)) + min;
-// };
+const generateOTP = () => {
+  const min = 1000;
+  const max = 9999;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
 
-// const sendVerificationEmail = async (email, otp) => {
-//   try {
-//     // Gọi hàm sendEmail để gửi email với mã OTP
-//     const result = await sendEmail(email, otp); // Pass email and otp directly
-
-//     return result;
-//   } catch (error) {
-//     console.error("Error sending verification email:", error);
-//     throw new Error("Error sending verification email");
-//   }
-// };
-
-const SignUp = async (req, res) => {
+const sendVerificationEmail = async (email, otp) => {
   try {
-    // Extract data from the request body
-    const data = req.body;
+    // Gọi hàm sendEmail để gửi email với mã OTP
+    const result = await sendEmail(email, otp); // Pass email and otp directly
 
-    // create a new user
-    let user = new User({
-      name: data.userName,
-      email: data.email,
-      password: data.password,
-      role: data.role,
-    });
-
-    // Basic validation
-    if (!userName || !email || !password || !role) {
-      return res.status(400).json({ message: 'All fields are required' });
-    }
-
-    // Create user details based on user type
-    user
-      .save()
-      .then(() => {
-        const userDetails =
-          user.type == "recruiter"
-            ? new Recruiter({
-              userId: user._id,
-              name: data.name,
-              contactNumber: data.contactNumber,
-              bio: data.bio,
-              profile: data.profile,
-            })
-            : new JobApplicant({
-              userId: user._id,
-              name: data.name,
-              education: data.education,
-              skills: data.skills,
-              rating: data.rating,
-              resume: data.resume,
-              profile: data.profile,
-            });
-
-        userDetails
-          .save()
-          .then(() => {
-            // Token
-            const token = jwt.sign({ _id: user._id }, authKeys.jwtSecretKey);
-            res.json({
-              token: token,
-              type: user.type,
-              _id: user._id,
-            });
-          })
-          .catch((err) => {
-            user
-              .deleteOne()
-              .then(() => {
-                res.status(400).json(err);
-              })
-              .catch((err) => {
-                res.json({ error: err });
-              });
-            err;
-          });
-      })
-      .catch((err) => {
-        res.status(400).json(err);
-      });
-  } catch (err) {
-    // Handle errors during user creation or user details creation
-    console.log(err.message);
-    res.status(400).json({ error: err.message });
+    return result;
+  } catch (error) {
+    console.error("Error sending verification email:", error);
+    throw new Error("Error sending verification email");
   }
 };
+
 
 // Register 
 const Register  =  async (req, res) => {
@@ -272,7 +199,7 @@ const Login = (req, res, next) => {
   )(req, res, next);
 };
 // get user's personal details
-const getUser = (req, res) => {
+const getUser = (req, res) => { 
   try {
     const user = req.user;
     if (user.role === "recruiter") {
@@ -307,6 +234,34 @@ const getUser = (req, res) => {
   } catch (error) {
     console.log(error.message);
     res.status(500).send({ message: error.message });
+  }
+};
+
+// PUT: Update User Account
+const update = async (req, res) => {
+  const { id, avatar, location, gender, currency, phone, address } = req.body;
+
+  try {
+    // Find user by ID
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update the user's details
+    user.avatar = avatar || user.avatar;  // Keep the existing avatar if none provided
+    user.location = location;
+    user.gender = gender;
+    user.currency = currency;
+    user.phone = phone;
+    user.address = address;
+
+    // Save updated user
+    await user.save();
+    res.status(200).json({ message: 'User data updated successfully' });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ message: 'Error updating user data' });
   }
 };
 
@@ -473,13 +428,14 @@ const googleLogin = async (req, res) => {
     res.status(400).json({ message: 'Unsupported login type' });
   }
 };
-
+   
 
 
 
 
 module.exports = {
   getUser,
+  update,
   Login,
   Register, // new
   forgotPassword,

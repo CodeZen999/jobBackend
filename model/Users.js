@@ -24,7 +24,30 @@ let schema = new mongoose.Schema(
       enum: ["recruiter", "applicant", "admin"],
       required: true,
     },
-
+    avatar: {
+      type: String,
+      required: false,
+    },
+    phone: {
+      type: String,
+      required: false,
+    },
+    address: {
+      type: String,
+      required: false,
+    },
+    location: {
+      type: String,
+      required: false,
+    },
+    gender: {
+      type: String,
+      required: false,
+    },
+    currency: {
+      type: String,
+      required: false,
+    },
     passwordChangedAt: {
       type: String,
     },

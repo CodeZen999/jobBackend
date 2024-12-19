@@ -1,68 +1,76 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-let schema = new mongoose.Schema(
-  {
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-    },
-    recruiterId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-    },
-    jobId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-    },
-    mobile:{
-      type:String,
-      default:`+91 98765 43210.`,
-    },
-    status: {
-      type: String,
-      enum: [
-        "applied", // when a applicant is applied
-        "shortlisted", // when a applicant is shortlisted
-        "accepted", // when a applicant is accepted
-        "rejected", // when a applicant is rejected
-        "deleted", // when any job is deleted
-        "cancelled", // an application is cancelled by its author or when other application is accepted
-        "finished", // when job is over
-      ],
-      default: "applied",
-      required: true,
-    },
-    dateOfApplication: {
-      type: Date,
-      default: Date.now,
-    },
-    dateOfJoining: {
-      type: Date,
-      validate: [
-        {
-          validator: function (value) {
-            return this.dateOfApplication <= value;
-          },
-          msg: "dateOfJoining should be greater than dateOfApplication",
-        },
-      ],
-    },
-    sop: {
-      type: String,
-      validate: {
-        validator: function (v) {
-          return v.split(" ").filter((ele) => ele != "").length <= 250;
-        },
-        msg: "Statement of purpose should not be greater than 250 words",
-      },
-    },
-    ispayment:{
-      type:Boolean,
-      default: false,
-    },
-   
+const applicationSchema = new mongoose.Schema({
+  jobId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    required: true, 
+    ref: 'Job' 
   },
-  { collation: { locale: "en" } }
-);
+  applicationId: { 
+    type: mongoose.Schema.Types.ObjectId,
+    required: true, 
+    ref: 'Proposer' 
+  },
+  posterId: { 
+    type: mongoose.Schema.Types.ObjectId,
+    required: true, 
+    ref: 'Poster' 
+  },
+  jobtitle: { 
+    type: String, 
+    required: true 
+  },
+  status: { 
+    type: String, 
+    default: 'Pending' // Pending, Shortlisted, Accepted, Rejected, etc.
+  },
+  email: { 
+    type: String, 
+    required: true 
+  },
+  experience: { 
+    type: String, 
+    required: true 
+  },
+  applicationAvatar:{
+    type: String, 
+    required: false 
+  },
+  location: { 
+    type: Map, 
+    of: String,
+    required: true 
+  },
+  mobile: { 
+    type: String, 
+    required: true 
+  },
+  name: { 
+    type: String, 
+    required: true 
+  },
+  portfolioURL: { 
+    type: String, 
+    required: true 
+  },
+  salary: { 
+    type: String, 
+    required: true 
+  },
+  skills: [ 
+    {
+      title: String,
+      year: Number
+    }
+  ],
+  resume: { 
+    type: String, 
+    required: true 
+  },
+  appliedAt: { 
+    type: Date, 
+    default: Date.now 
+  },
+});
 
-module.exports = mongoose.model("applications", schema);
+module.exports = mongoose.model('Application', applicationSchema);
