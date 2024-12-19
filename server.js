@@ -26,6 +26,7 @@ app.use(passportConfig.initialize());
 app.use(
   cors({
     origin: ["http://minerva2021.s3-website.eu-north-1.amazonaws.com/"],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   })
 );
