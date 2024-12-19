@@ -8,9 +8,13 @@ require("dotenv").config();
 
 const initRouter = require("./routes");
 
+
+
 // Connect to MongoDB
-mongoose
-  .connect(process.env.MONGO_URL)
+mongoose    
+  .connect(
+    process.env.MONGO_URL
+  )
   .then(() => console.log("Connected successfully to DB"))
   .catch((err) => console.error(err));
 
@@ -23,13 +27,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(passportConfig.initialize());
-app.use(
-  cors({
-    origin: ["http://minerva2021.s3-website.eu-north-1.amazonaws.com/"],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
-  })
-);
+app.use(cors());
 
 app.use((req, res, next) => {
   console.log(`\x1b[42m ${req.method} ${req.url} request received.\x1b[0m`);
@@ -45,5 +43,5 @@ initRouter(app);
 
 // Start server
 app.listen(port, () => {
-  console.log(`Server started on port ${port}!`);
+  console.log(`Server started on port ${port}!`);  
 });
