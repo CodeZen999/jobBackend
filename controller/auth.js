@@ -178,6 +178,8 @@ const VerifyEmail = async (req, res) => {
 
 // Define a function for user Login
 const Login = (req, res, next) => {
+
+  console.log("dararararar");
   passport.authenticate(
     "local",
     { session: false },
